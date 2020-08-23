@@ -7,10 +7,16 @@ class FlutterAdmobBannerArea extends StatefulWidget {
 
   final Widget child;
   final Color backgroundColor;
+  final Function onShow;
+  final Function onDismiss;
+  final double height;
 
   FlutterAdmobBannerArea({Key key,
     @required this.child,
-    this.backgroundColor
+    this.backgroundColor,
+    this.onShow,
+    this.onDismiss,
+    this.height
   }):super(key: key);
 
   @override
@@ -36,18 +42,24 @@ class _FlutterAdmobBannerAreaState extends State<FlutterAdmobBannerArea> {
         onConnected: () {
           setState(() {
 //            paddingBottom = 0.0; // when screenshot
-            paddingBottom = 50.0; // normal
+            paddingBottom = widget.height ?? 50.0; // normal
           });
+          // show banner
+          if(widget.onShow != null)
+            widget.onShow();
         },
         onDisconnected: () {
           setState(() {
             paddingBottom = 0.0;
           });
+          // hide banner
+          if(widget.onDismiss != null)
+            widget.onDismiss();
         }
     );
 
     return Container(
-      color: Colors.grey.shade50,
+      color: widget.backgroundColor ?? Colors.grey.shade50,
       child: Padding(
         child: widget.child,
         padding: new EdgeInsets.only(bottom: paddingBottom, right: paddingRight),
